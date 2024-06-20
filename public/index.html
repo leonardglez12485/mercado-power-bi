@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Chat personal</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css" />
+  <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.9.0/css/all.min.css' />
+  <link rel="stylesheet" href="css/styles.css">
+
+</head>
+
+<body>
+
+
+  <div class="center" id="principal">
+      <!-- Inputs y Forms -->
+    <div id="div-form">
+
+      <form class="form" id="fondo"  onsubmit="">
+
+        <img class="login" src="./user.png" alt="">
+
+        <label id="label-access" for="">Access</label>
+     
+        <input class="login" placeholder="Name" type="text" />
+    
+        <input class="login" placeholder="Password" type="password">
+      
+        <button id="button-submit" type="submit">Login</button>
+        
+        <label id="label-forgot" for="">Forgot Password</label>
+
+      </form>
+
+    </div>
+  </div>  
+       
+ 
+
+
+    </div>
+  </div>
+
+
+  <script>
+
+    const form = document.querySelector('.form');
+    const input = document.querySelector('input');
+
+    form.addEventListener( 'submit', (e) => {
+      e.preventDefault();
+      const name = input.value;
+      if ( name ) {
+        localStorage.setItem('name', name);
+        window.location.href = 'chat.html';
+      }
+    })
+
+
+  </script>
+
+
+</body>
+
+</html>

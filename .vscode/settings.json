@@ -1,0 +1,5 @@
+{
+    "editor.inlineSuggest.showToolbar": "always",
+    "CodeGPT.apiKey": "Google AI Studio",
+    "CodeGPT.Autocomplete.enabled": true
+}
