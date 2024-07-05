@@ -28,11 +28,6 @@ export class MercanciaController {
     return this.mercanciaService.create(createMercanciaDto);
   } 
 
-  @Post('dasboard')
-  sendDashboard(){
-    return this.mercanciaService.sendDataMerca();
-  }
-
   @Get()
   //@Auth()
   findAll(@Query() paginationDto: PaginationDto) {

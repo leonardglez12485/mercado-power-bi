@@ -19,6 +19,7 @@ import { AuthModule } from './auth/auth.module';
 import { MessagesWsModule } from './messages-ws/messages-ws.module';
 import { AssistantModule } from './assistant/assistant.module';
 import { TransferDataModule } from './transfer-data/transfer-data.module';
+import { DashboardModule } from './dashboard/dashboard.module';
 
 
 @Module({
@@ -43,6 +44,7 @@ import { TransferDataModule } from './transfer-data/transfer-data.module';
     MessagesWsModule,
     AssistantModule,
     TransferDataModule,
+    DashboardModule,
   ],
   controllers: [AppController],
   providers: [AppService],

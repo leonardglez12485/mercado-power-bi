@@ -16,21 +16,6 @@ import { listenerCount } from 'process';
 import { parseFecha } from 'src/common/helpers/data.openAI';
 import { Trabajador } from 'src/trabajador/entities/trabajador.entity';
 
-export interface MercaDasboard{
-    "Name" :string,
-    "Department": string,
-    "Quanatity" :number,
-    "Price" :number,
-    "Worker": string,
-    "Date" :string,
-}
-
-export interface DptoDasboard{
-  "Nombre" :string,
-  "Trabajadores": number,
-  "Mercancia" :number,
-}
-
 
 @Injectable()
 export class MercanciaService {
@@ -73,58 +58,12 @@ export class MercanciaService {
   findAll(paginationDto: PaginationDto) {
     const { limit = 10, offset = 0 } = paginationDto;
     return this.mercaModel.find({ disponible: true })
+      .populate({ path: 'depto', select: ['nombre']})
       .limit(limit)
       .skip(offset)
       .select('-__v')
    
   }
-
-  //===========================
-  //Send Data to PowerBi
-  //===========================
-  async sendDataToPowerBI(data: MercaDasboard[]): Promise<void> {
-    const powerBIAPIURL = 'https://api.powerbi.com/beta/760fe82f-1c6d-4e38-9fa9-994e8f3fcb10/datasets/5e0ef43e-2bd1-489c-9a1c-d176d99cd271/rows?experience=power-bi&clientSideAuth=0&key=zpeyg%2BdYZraqwIP5UGW%2BvmHxg2AvgUlUKH%2FT%2B5%2FzuLrmvcMJ68xpGo%2BFcjYRdnXgbQsAZ%2BHdkkFkegA%2Ft35ITg%3D%3D'
-    try {
-      const response = await fetch(powerBIAPIURL, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        // 'Authorization': `Bearer ${powerBIAPIKey}`
-        },
-        body: JSON.stringify({ rows: data })
-      });
-  
-      if (!response.ok) {
-        throw new Error(`Error al enviar datos a Power BI: ${response.status} ${response.statusText}`);
-      }
-  
-      console.log('Datos enviados correctamente a Power BI.');
-    } catch (error) {
-      console.error('Error al enviar datos a Power BI:', error);
-    }
-  }
-
-async sendDataMerca(): Promise<MercaDasboard[]>{
-const mercancias = await this.mercaModel
-      .find()
-      .populate({path:'depto', select: 'nombre  -_id'})
-      .populate({path:'trab', select: 'fullName  -_id'})
-const listMerca: MercaDasboard[]= [];
-for await (const item of mercancias) {
-  listMerca.push({
-    Name: item.nombre,
-    Department: item.depto.nombre,
-    Quanatity: item.cantidad,
-    Price: item.precio,
-    Worker: item.trab.fullName,
-    Date: parseFecha(item.fechaEntrada),
-  })
-}
-
-
-await this.sendDataToPowerBI(listMerca);
-return listMerca;
-}
 
   //==================================
   //Buscar una mercancia en especifico

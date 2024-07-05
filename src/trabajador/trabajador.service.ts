@@ -6,12 +6,13 @@ import { BadRequestException, Injectable, InternalServerErrorException, NotFound
 import { CreateTrabajadorDto } from './dto/create-trabajador.dto';
 import { UpdateTrabajadorDto } from './dto/update-trabajador.dto';
 import { InjectModel } from '@nestjs/mongoose';
-import { Trabajador } from './entities/trabajador.entity';
+import { Trabajador, TrabajadorDocument } from './entities/trabajador.entity';
 import { Model, isValidObjectId } from 'mongoose';
 import { ConfigService } from '@nestjs/config';
 import { User, UserDocument } from 'src/auth/entities/user.entity';
 import { Role } from 'src/auth/enums/role.enum';
 import * as bcrypt from 'bcrypt';
+import { Departamento, DeptoDocument } from 'src/departamento/entities/departamento.entity';
 
 @Injectable()
 export class TrabajadorService {
@@ -21,6 +22,7 @@ export class TrabajadorService {
   constructor(
     @InjectModel(Trabajador.name) private readonly trabModel: Model<Trabajador>,
     @InjectModel(User.name) private readonly userModel: Model<UserDocument>,
+    @InjectModel(Departamento.name) private readonly deptoModel: Model<DeptoDocument>,
     private readonly configService: ConfigService,
   ) {
     this.defaultLimit = configService.getOrThrow<number>('default_limits')
@@ -33,7 +35,7 @@ export class TrabajadorService {
     dto.fullName = dto.fullName.toLocaleLowerCase();
     const userExist = await this.userModel.findOne({ email: dto.email });
     const profile = await this.trabModel.findOne({ email: dto.email });
-    if (userExist || profile) throw new BadRequestException('email is already taken')
+   // if (userExist || profile) throw new BadRequestException('email is already taken')
 
     try {
       const user: User = {
@@ -44,17 +46,17 @@ export class TrabajadorService {
       }
       user.password = bcrypt.hashSync(user.password, 10);
       const newUser = await this.userModel.create(user);
+      const depto = await this.deptoModel.findById(dto.depto);
       let newTrab: Trabajador = {
-        ci: dto.ci,
-        depto: dto.depto,
-        user: newUser,
         email: dto.email,
-        fullName: dto.fullName
+        fullName: dto.fullName,
+        user: newUser,
+        ci: dto.ci,
+        depto: depto,
       }
-
-      const trab = await this.trabModel.create(newTrab);
+      console.log(newTrab);
+      const trab = await this.trabModel.create(dto);
       return trab;
-
     } catch (error) {
       this.hadleException(error);
     }
